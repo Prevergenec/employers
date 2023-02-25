@@ -22,25 +22,40 @@ class App extends Component {
 
     deleteItem = (id) => {
         this.setState(({data}) => {
-            const index = data.findIndex(elem => elem.id === id);
-
-            // const before = data.splice(0, index);
-            // const after = data.splice(index + 1);
-
-            // const newArr = [...before, ...after];
-
-            // return {
-            //     data: newArr
-            // }
-
             return {
                 data: data.filter(item => item.id !== id)
             }
         });
     }
 
+    addItem = (name, salary) => {
+        const newItem = {
+            name,
+            salary,
+            increase: false,
+            colorName: false,
+            id: this.maxId++
+        }
+        this.setState(({data}) => {
+            const newArr = [...data, newItem];
+            return {
+                data: newArr
+            }
+        });
+    }
+
     onToggleIncrease = (id) => {
-        console.log(`Increase this ${id}`);
+        this.setState(({data}) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = {...old, increase: !old.increase};
+            const newArr = [...data.slice(0, index),newItem, ...data.slice(index + 1)];
+
+            return {
+                data: newArr
+            }
+        })
     }
 
     onToggleCangeColor = (id) => {
@@ -58,12 +73,13 @@ class App extends Component {
                     <AppFilter />
                 </div>
     
-                <EmployersList 
+                <Employ
+                ersList 
                 data={this.state.data} 
                 onDelete={this.deleteItem} 
                 onToggleIncrease={this.onToggleIncrease}
                 onToggleCangeColor={this.onToggleCangeColor} />
-                <EmployersAddForm />
+                <EmployersAddForm onAdd={this.addItem}/>
             </div>
         );
     }
